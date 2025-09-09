@@ -1,0 +1,32 @@
+
+app = "regatta-api"
+primary_region = "ams"
+
+[build]
+  dockerfile = "Dockerfile"
+
+[env]
+  DJANGO_DEBUG = "False"
+  DJANGO_ALLOWED_HOSTS = "regatta-api.fly.dev"
+  TIME_ZONE = "Europe/Helsinki"
+
+[[services]]
+  internal_port = 8000
+  processes = ["app"]
+  protocol = "tcp"
+  [[services.ports]]
+    handlers = ["http"]
+    port = 80
+  [[services.ports]]
+    handlers = ["tls", "http"]
+    port = 443
+  [services.concurrency]
+    type = "connections"
+    soft_limit = 100
+    hard_limit = 200
+
+[http_service]
+  auto_stop_machines = true
+  auto_start_machines = true
+  min_machines_running = 1
+  processes = ["app"]
